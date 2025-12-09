@@ -1,0 +1,32 @@
+import nodemailer from 'nodemailer';
+import config from '../config';
+import { ISendEmail } from '../types/email';
+
+const transporter = nodemailer.createTransport({
+  host: config.email.host,
+  port: Number(config.email.port),
+  secure: false,
+  auth: {
+    user: config.email.user,
+    pass: config.email.pass,
+  },
+});
+
+const sendEmail = async (values: ISendEmail) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Simply Good Food" ${config.email.from}`,
+      to: values.to,
+      subject: values.subject,
+      html: values.html,
+    });
+
+    // no-op
+  } catch (error) {
+    // no-op
+  }
+};
+
+export const emailHelper = {
+  sendEmail,
+};
