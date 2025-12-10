@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // app/(auth)/layout.tsx
 
 export default function AuthLayout({
