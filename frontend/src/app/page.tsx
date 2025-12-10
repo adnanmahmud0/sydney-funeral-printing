@@ -1,10 +1,14 @@
+import { ActionButton } from "@/components/home/ActionButton";
+import AuthCard from "@/components/home/AuthCard";
+import { DeliveryInfoCard } from "@/components/home/DeliveryInfoCard";
 import { Industries1 } from "@/components/home/page";
+import { TurnaroundBadge } from "@/components/home/TurnaroundBadge";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Page() {
   return (
-    <>
+    <div className="max-w-7xl mx-auto">
       <div>
         <div className="flex justify-center mb-6">
           <Link href="/" className="flex items-center gap-3 font-semibold">
@@ -31,6 +35,18 @@ export default function Page() {
         </p>
         <Industries1 />
       </div>
-    </>
+      <div>
+        <AuthCard />
+      </div>
+      <div>
+        <TurnaroundBadge />
+      </div>
+      <div>
+        <ActionButton />
+      </div>
+      <div>
+        <DeliveryInfoCard />
+      </div>
+    </div>
   );
 }
