@@ -6,7 +6,7 @@ import { Canvas, CanvasHandle } from "./Canvas";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { LayersPanel } from "./LayersPanel";
 import { PagesPanel } from "./PagesPanel";
-import { DesignObject, DesignPage, HistoryState } from "../types/design";
+import { DesignObject, DesignPage, HistoryState } from "@/types/design";
 import { Menu, X } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
