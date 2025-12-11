@@ -1,107 +1,129 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from "react";
 import { DesignObject } from "@/types/design";
-import { Lock } from 'lucide-react';
+import { Lock } from "lucide-react";
 
 interface CanvasObjectProps {
   object: DesignObject;
   isSelected: boolean;
   onSelect: () => void;
   onUpdate: (updates: Partial<DesignObject>) => void;
+  zoom: number;
 }
 
-export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasObjectProps) {
+export function CanvasObject({
+  object,
+  isSelected,
+  onSelect,
+  onUpdate,
+  zoom,
+}: CanvasObjectProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeDirection, setResizeDirection] = useState<string>('');
+  const [resizeDirection, setResizeDirection] = useState<string>("");
   const [isRotating, setIsRotating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState(object.text || '');
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0, objX: 0, objY: 0, objWidth: 0, objHeight: 0 });
+  const [editText, setEditText] = useState(object.text || "");
+  const [dragStart, setDragStart] = useState({
+    x: 0,
+    y: 0,
+    objX: 0,
+    objY: 0,
+    objWidth: 0,
+    objHeight: 0,
+  });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging) {
-        const dx = e.clientX - dragStart.x;
-        const dy = e.clientY - dragStart.y;
+        const dx = (e.clientX - dragStart.x) / zoom;
+        const dy = (e.clientY - dragStart.y) / zoom;
         onUpdate({
           x: dragStart.objX + dx,
-          y: dragStart.objY + dy
+          y: dragStart.objY + dy,
         });
       } else if (isResizing) {
-        const dx = e.clientX - dragStart.x;
-        const dy = e.clientY - dragStart.y;
+        const dx = (e.clientX - dragStart.x) / zoom;
+        const dy = (e.clientY - dragStart.y) / zoom;
         const aspectRatio = dragStart.objWidth / dragStart.objHeight;
-        
+
         switch (resizeDirection) {
-          case 'nw': {
+          case "nw": {
             // For top-left: dragging left/up increases size, right/down decreases size
-            const delta = Math.max(Math.abs(dx), Math.abs(dy)) * (dx > 0 || dy > 0 ? -1 : 1);
+            const delta =
+              Math.max(Math.abs(dx), Math.abs(dy)) *
+              (dx > 0 || dy > 0 ? -1 : 1);
             const newWidth = Math.max(20, dragStart.objWidth + delta);
             const newHeight = newWidth / aspectRatio;
             onUpdate({
               x: dragStart.objX - (newWidth - dragStart.objWidth),
               y: dragStart.objY - (newHeight - dragStart.objHeight),
               width: newWidth,
-              height: newHeight
+              height: newHeight,
             });
             break;
           }
-          case 'ne': {
+          case "ne": {
             // For top-right: dragging right/up increases size, left/down decreases size
-            const delta = Math.max(Math.abs(dx), Math.abs(dy)) * (dx > 0 || dy < 0 ? 1 : -1);
+            const delta =
+              Math.max(Math.abs(dx), Math.abs(dy)) *
+              (dx > 0 || dy < 0 ? 1 : -1);
             const newWidth = Math.max(20, dragStart.objWidth + delta);
             const newHeight = newWidth / aspectRatio;
             onUpdate({
               y: dragStart.objY - (newHeight - dragStart.objHeight),
               width: newWidth,
-              height: newHeight
+              height: newHeight,
             });
             break;
           }
-          case 'sw': {
+          case "sw": {
             // For bottom-left: dragging left/down increases size, right/up decreases size
-            const delta = Math.max(Math.abs(dx), Math.abs(dy)) * (dx > 0 || dy < 0 ? -1 : 1);
+            const delta =
+              Math.max(Math.abs(dx), Math.abs(dy)) *
+              (dx > 0 || dy < 0 ? -1 : 1);
             const newWidth = Math.max(20, dragStart.objWidth + delta);
             const newHeight = newWidth / aspectRatio;
             onUpdate({
               x: dragStart.objX - (newWidth - dragStart.objWidth),
               width: newWidth,
-              height: newHeight
+              height: newHeight,
             });
             break;
           }
-          case 'se': {
+          case "se": {
             // For bottom-right: dragging right/down increases size, left/up decreases size
-            const delta = Math.max(Math.abs(dx), Math.abs(dy)) * (dx > 0 || dy > 0 ? 1 : -1);
+            const delta =
+              Math.max(Math.abs(dx), Math.abs(dy)) *
+              (dx > 0 || dy > 0 ? 1 : -1);
             const newWidth = Math.max(20, dragStart.objWidth + delta);
             const newHeight = newWidth / aspectRatio;
             onUpdate({
               width: newWidth,
-              height: newHeight
+              height: newHeight,
             });
             break;
           }
-          case 'n':
+          case "n":
             onUpdate({
               y: dragStart.objY + dy,
-              height: Math.max(20, dragStart.objHeight - dy)
+              height: Math.max(20, dragStart.objHeight - dy),
             });
             break;
-          case 's':
+          case "s":
             onUpdate({
-              height: Math.max(20, dragStart.objHeight + dy)
+              height: Math.max(20, dragStart.objHeight + dy),
             });
             break;
-          case 'e':
+          case "e":
             onUpdate({
-              width: Math.max(20, dragStart.objWidth + dx)
+              width: Math.max(20, dragStart.objWidth + dx),
             });
             break;
-          case 'w':
+          case "w":
             onUpdate({
               x: dragStart.objX + dx,
-              width: Math.max(20, dragStart.objWidth - dx)
+              width: Math.max(20, dragStart.objWidth - dx),
             });
             break;
         }
@@ -111,7 +133,7 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
           const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
-          onUpdate({ rotation: (angle * 180 / Math.PI) + 90 });
+          onUpdate({ rotation: (angle * 180) / Math.PI + 90 });
         }
       }
     };
@@ -123,14 +145,14 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
     };
 
     if (isDragging || isResizing || isRotating) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, isResizing, isRotating, dragStart, object]);
+  }, [isDragging, isResizing, isRotating, dragStart, object, zoom]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -141,7 +163,7 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
       x: e.clientX,
       y: e.clientY,
       objX: object.x,
-      objY: object.y
+      objY: object.y,
     });
   };
 
@@ -150,7 +172,14 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
     if (object.locked) return; // Prevent resizing if locked
     setIsResizing(true);
     setResizeDirection(direction);
-    setDragStart({ x: e.clientX, y: e.clientY, objX: object.x, objY: object.y, objWidth: object.width, objHeight: object.height });
+    setDragStart({
+      x: e.clientX,
+      y: e.clientY,
+      objX: object.x,
+      objY: object.y,
+      objWidth: object.width,
+      objHeight: object.height,
+    });
   };
 
   const handleRotateStart = (e: React.MouseEvent) => {
@@ -162,9 +191,9 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (object.locked) return; // Prevent editing if locked
-    if (object.type === 'text') {
+    if (object.type === "text") {
       setIsEditing(true);
-      setEditText(object.text || '');
+      setEditText(object.text || "");
     }
   };
 
@@ -179,28 +208,33 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
 
   const renderShape = () => {
     const style: React.CSSProperties = {
-      width: '100%',
-      height: '100%',
+      width: "100%",
+      height: "100%",
       fill: object.fill,
       stroke: object.stroke,
-      strokeWidth: object.strokeWidth
+      strokeWidth: object.strokeWidth,
     };
 
     const hasBackgroundImage = object.backgroundImage;
 
     switch (object.shape) {
-      case 'rectangle':
+      case "rectangle":
         return (
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             {hasBackgroundImage && (
               <defs>
-                <pattern id={`pattern-${object.id}`} patternUnits="objectBoundingBox" width="1" height="1">
+                <pattern
+                  id={`pattern-${object.id}`}
+                  patternUnits="objectBoundingBox"
+                  width="1"
+                  height="1"
+                >
                   <image
                     href={object.backgroundImage}
-                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + '%'}
-                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + '%'}
-                    width={100 * (object.backgroundScale || 1) + '%'}
-                    height={100 * (object.backgroundScale || 1) + '%'}
+                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + "%"}
+                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + "%"}
+                    width={100 * (object.backgroundScale || 1) + "%"}
+                    height={100 * (object.backgroundScale || 1) + "%"}
                     preserveAspectRatio="xMidYMid slice"
                   />
                 </pattern>
@@ -212,24 +246,31 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
               width={object.width - (object.strokeWidth || 0) * 2}
               height={object.height - (object.strokeWidth || 0) * 2}
               rx={object.cornerRadius || 0}
-              fill={hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill}
+              fill={
+                hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill
+              }
               stroke={object.stroke}
               strokeWidth={object.strokeWidth}
             />
           </svg>
         );
-      case 'circle':
+      case "circle":
         return (
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             {hasBackgroundImage && (
               <defs>
-                <pattern id={`pattern-${object.id}`} patternUnits="objectBoundingBox" width="1" height="1">
+                <pattern
+                  id={`pattern-${object.id}`}
+                  patternUnits="objectBoundingBox"
+                  width="1"
+                  height="1"
+                >
                   <image
                     href={object.backgroundImage}
-                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + '%'}
-                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + '%'}
-                    width={100 * (object.backgroundScale || 1) + '%'}
-                    height={100 * (object.backgroundScale || 1) + '%'}
+                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + "%"}
+                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + "%"}
+                    width={100 * (object.backgroundScale || 1) + "%"}
+                    height={100 * (object.backgroundScale || 1) + "%"}
                     preserveAspectRatio="xMidYMid slice"
                   />
                 </pattern>
@@ -240,67 +281,90 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
               cy={object.height / 2}
               rx={object.width / 2 - (object.strokeWidth || 0)}
               ry={object.height / 2 - (object.strokeWidth || 0)}
-              fill={hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill}
+              fill={
+                hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill
+              }
               stroke={object.stroke}
               strokeWidth={object.strokeWidth}
             />
           </svg>
         );
-      case 'triangle':
+      case "triangle":
         return (
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             {hasBackgroundImage && (
               <defs>
-                <pattern id={`pattern-${object.id}`} patternUnits="objectBoundingBox" width="1" height="1">
+                <pattern
+                  id={`pattern-${object.id}`}
+                  patternUnits="objectBoundingBox"
+                  width="1"
+                  height="1"
+                >
                   <image
                     href={object.backgroundImage}
-                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + '%'}
-                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + '%'}
-                    width={100 * (object.backgroundScale || 1) + '%'}
-                    height={100 * (object.backgroundScale || 1) + '%'}
+                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + "%"}
+                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + "%"}
+                    width={100 * (object.backgroundScale || 1) + "%"}
+                    height={100 * (object.backgroundScale || 1) + "%"}
                     preserveAspectRatio="xMidYMid slice"
                   />
                 </pattern>
               </defs>
             )}
             <polygon
-              points={`${object.width / 2},${object.strokeWidth || 0} ${object.width - (object.strokeWidth || 0)},${object.height - (object.strokeWidth || 0)} ${object.strokeWidth || 0},${object.height - (object.strokeWidth || 0)}`}
-              fill={hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill}
+              points={`${object.width / 2},${object.strokeWidth || 0} ${
+                object.width - (object.strokeWidth || 0)
+              },${object.height - (object.strokeWidth || 0)} ${
+                object.strokeWidth || 0
+              },${object.height - (object.strokeWidth || 0)}`}
+              fill={
+                hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill
+              }
               stroke={object.stroke}
               strokeWidth={object.strokeWidth}
             />
           </svg>
         );
-      case 'star':
+      case "star":
         const cx = object.width / 2;
         const cy = object.height / 2;
-        const outerRadius = Math.min(object.width, object.height) / 2 - (object.strokeWidth || 0);
+        const outerRadius =
+          Math.min(object.width, object.height) / 2 - (object.strokeWidth || 0);
         const innerRadius = outerRadius * 0.4;
         const points = [];
         for (let i = 0; i < 10; i++) {
           const radius = i % 2 === 0 ? outerRadius : innerRadius;
           const angle = (i * Math.PI) / 5 - Math.PI / 2;
-          points.push(`${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`);
+          points.push(
+            `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`
+          );
         }
         return (
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             {hasBackgroundImage && (
               <defs>
-                <pattern id={`pattern-${object.id}`} patternUnits="objectBoundingBox" width="1" height="1">
+                <pattern
+                  id={`pattern-${object.id}`}
+                  patternUnits="objectBoundingBox"
+                  width="1"
+                  height="1"
+                >
                   <image
                     href={object.backgroundImage}
-                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + '%'}
-                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + '%'}
-                    width={100 * (object.backgroundScale || 1) + '%'}
-                    height={100 * (object.backgroundScale || 1) + '%'}
+                    x={((object.backgroundPosition?.x || 50) - 50) * 2 + "%"}
+                    y={((object.backgroundPosition?.y || 50) - 50) * 2 + "%"}
+                    width={100 * (object.backgroundScale || 1) + "%"}
+                    height={100 * (object.backgroundScale || 1) + "%"}
                     preserveAspectRatio="xMidYMid slice"
                   />
                 </pattern>
               </defs>
             )}
-            <polygon 
-              points={points.join(' ')} 
-              fill={hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill}
+            <polygon
+              points={points.join(" ")}
+              fill={
+                hasBackgroundImage ? `url(#pattern-${object.id})` : object.fill
+              }
               stroke={object.stroke}
               strokeWidth={object.strokeWidth}
             />
@@ -312,15 +376,15 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
   };
 
   const objectStyle: React.CSSProperties = {
-    position: 'absolute',
+    position: "absolute",
     left: `${object.x}px`,
     top: `${object.y}px`,
     width: `${object.width}px`,
     height: `${object.height}px`,
     transform: `rotate(${object.rotation}deg)`,
     opacity: object.opacity,
-    cursor: object.locked ? 'not-allowed' : (isDragging ? 'grabbing' : 'grab'),
-    filter: object.blur ? `blur(${object.blur}px)` : undefined
+    cursor: object.locked ? "not-allowed" : isDragging ? "grabbing" : "grab",
+    filter: object.blur ? `blur(${object.blur}px)` : undefined,
   };
 
   return (
@@ -331,8 +395,8 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
       onDoubleClick={handleDoubleClick}
       className="select-none"
     >
-      {object.type === 'text' && (
-        isEditing ? (
+      {object.type === "text" &&
+        (isEditing ? (
           <textarea
             value={editText}
             onChange={handleTextChange}
@@ -344,7 +408,7 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
               fontFamily: object.fontFamily,
               fontWeight: object.fontWeight,
               textAlign: object.textAlign,
-              color: object.color
+              color: object.color,
             }}
           />
         ) : (
@@ -355,17 +419,16 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
               fontFamily: object.fontFamily,
               fontWeight: object.fontWeight,
               textAlign: object.textAlign,
-              color: object.color
+              color: object.color,
             }}
           >
             {object.text}
           </div>
-        )
-      )}
+        ))}
 
-      {object.type === 'shape' && renderShape()}
+      {object.type === "shape" && renderShape()}
 
-      {object.type === 'image' && object.imageUrl && (
+      {object.type === "image" && object.imageUrl && (
         <img
           src={object.imageUrl}
           alt="Uploaded"
@@ -376,65 +439,69 @@ export function CanvasObject({ object, isSelected, onSelect, onUpdate }: CanvasO
 
       {isSelected && !isEditing && (
         <>
-          <div className={`absolute inset-0 border-2 pointer-events-none ${object.locked ? 'border-orange-500' : 'border-[#1C75BC]'}`} />
-          
+          <div
+            className={`absolute inset-0 border-2 pointer-events-none ${
+              object.locked ? "border-orange-500" : "border-[#1C75BC]"
+            }`}
+          />
+
           {!object.locked && (
             <>
               {/* Corner handles */}
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'nw')}
+                onMouseDown={(e) => handleResizeStart(e, "nw")}
                 className="absolute -left-1 -top-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-nwse-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'ne')}
+                onMouseDown={(e) => handleResizeStart(e, "ne")}
                 className="absolute -right-1 -top-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-nesw-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'sw')}
+                onMouseDown={(e) => handleResizeStart(e, "sw")}
                 className="absolute -left-1 -bottom-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-nesw-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'se')}
+                onMouseDown={(e) => handleResizeStart(e, "se")}
                 className="absolute -right-1 -bottom-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-nwse-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               {/* Edge handles */}
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'n')}
+                onMouseDown={(e) => handleResizeStart(e, "n")}
                 className="absolute left-1/2 -translate-x-1/2 -top-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-ns-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 's')}
+                onMouseDown={(e) => handleResizeStart(e, "s")}
                 className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-ns-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'e')}
+                onMouseDown={(e) => handleResizeStart(e, "e")}
                 className="absolute top-1/2 -translate-y-1/2 -right-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-ew-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               <div
-                onMouseDown={(e) => handleResizeStart(e, 'w')}
+                onMouseDown={(e) => handleResizeStart(e, "w")}
                 className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-[#1C75BC] border-2 border-white rounded-full cursor-ew-resize"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
-              
+
               {/* Rotate handle */}
               <div
                 onMouseDown={handleRotateStart}
                 className="absolute -top-8 left-1/2 -translate-x-1/2 w-3 h-3 bg-green-500 border-2 border-white rounded-full cursor-grab"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               />
             </>
           )}
