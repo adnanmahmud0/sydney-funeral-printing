@@ -8,7 +8,7 @@ export interface DesignObject {
   rotation: number;
   opacity: number;
   locked?: boolean;
-  
+
   // Text properties
   text?: string;
   fontSize?: number;
@@ -16,22 +16,22 @@ export interface DesignObject {
   fontWeight?: number;
   textAlign?: 'left' | 'center' | 'right';
   color?: string;
-  
+
   // Shape properties
   shape?: 'rectangle' | 'circle' | 'triangle' | 'star';
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
   cornerRadius?: number;
-  
+
   // Image properties
   imageUrl?: string;
-  
+
   // Shape with image background
   backgroundImage?: string;
   backgroundPosition?: { x: number; y: number };
   backgroundScale?: number;
-  
+
   // Effects
   shadow?: {
     x: number;

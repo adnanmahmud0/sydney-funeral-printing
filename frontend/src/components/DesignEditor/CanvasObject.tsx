@@ -1,3 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState, useEffect } from "react";
 import { DesignObject } from "@/types/design";
 import { Lock } from "lucide-react";
@@ -413,7 +416,7 @@ export function CanvasObject({
           />
         ) : (
           <div
-            className="w-full h-full break-words"
+            className="w-full h-full wrap-break-word"
             style={{
               fontSize: `${object.fontSize}px`,
               fontFamily: object.fontFamily,

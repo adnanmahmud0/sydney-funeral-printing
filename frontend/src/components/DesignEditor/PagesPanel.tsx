@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { DesignPage } from "@/types/design";
-import { Plus, Trash2, FileText, MoreVertical } from "lucide-react";
+import { Plus, Trash2, FileText } from "lucide-react";
 
 interface PagesPanelProps {
   pages: DesignPage[];
@@ -61,7 +62,7 @@ export function PagesPanel({
               }`}
               onClick={() => onSelectPage(page.id)}
             >
-              <FileText className="w-4 h-4 flex-shrink-0" />
+              <FileText className="w-4 h-4 shrink-0" />
 
               {editingPageId === page.id ? (
                 <input

@@ -1,7 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DesignObject } from "@/types/design";
 import {
-  Eye,
-  EyeOff,
   Copy,
   Trash2,
   GripVertical,
@@ -65,10 +64,10 @@ export function LayersPanel({
                         : "hover:bg-gray-100 text-gray-700"
                     }`}
                   >
-                    <GripVertical className="w-3 h-3 md:w-4 md:h-4 opacity-50 flex-shrink-0" />
+                    <GripVertical className="w-3 h-3 md:w-4 md:h-4 opacity-50 shrink-0" />
 
                     {obj.locked && (
-                      <Lock className="w-3 h-3 md:w-4 md:h-4 text-orange-500 flex-shrink-0" />
+                      <Lock className="w-3 h-3 md:w-4 md:h-4 text-orange-500 shrink-0" />
                     )}
 
                     <div className="flex-1 min-w-0">

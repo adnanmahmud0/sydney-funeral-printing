@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { Toolbar } from "./Toolbar";
 import { Sidebar } from "./Sidebar";
@@ -7,7 +7,7 @@ import { PropertiesPanel } from "./PropertiesPanel";
 import { LayersPanel } from "./LayersPanel";
 import { PagesPanel } from "./PagesPanel";
 import { DesignObject, DesignPage, HistoryState } from "@/types/design";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -38,7 +38,7 @@ export function DesignEditor() {
 
   const currentPage = pages.find((p) => p.id === currentPageId) || pages[0];
   const selectedObject = currentPage.objects.find(
-    (obj: { id: string | null; }) => obj.id === selectedId
+    (obj) => obj.id === selectedId
   );
 
   // Save to history
@@ -134,7 +134,7 @@ export function DesignEditor() {
       p.id === currentPageId
         ? {
             ...p,
-            objects: p.objects.map((obj: { id: string; }) =>
+            objects: p.objects.map((obj) =>
               obj.id === id ? { ...obj, ...updates } : obj
             ),
           }
@@ -147,7 +147,7 @@ export function DesignEditor() {
   const deleteObject = (id: string) => {
     const newPages = pages.map((p) =>
       p.id === currentPageId
-        ? { ...p, objects: p.objects.filter((obj: { id: string; }) => obj.id !== id) }
+        ? { ...p, objects: p.objects.filter((obj) => obj.id !== id) }
         : p
     );
     setPages(newPages);
@@ -157,7 +157,7 @@ export function DesignEditor() {
   };
 
   const duplicateObject = (id: string) => {
-    const obj = currentPage.objects.find((o: { id: string; }) => o.id === id);
+    const obj = currentPage.objects.find((o) => o.id === id);
     if (obj) {
       const newObj = {
         ...obj,
@@ -188,7 +188,7 @@ export function DesignEditor() {
       p.id === currentPageId
         ? {
             ...p,
-            objects: p.objects.map((obj: { id: string; locked: any; }) =>
+            objects: p.objects.map((obj) =>
               obj.id === id ? { ...obj, locked: !obj.locked } : obj
             ),
           }
@@ -255,7 +255,11 @@ export function DesignEditor() {
   };
 
   const handleCenterCanvas = () => {
-    canvasRef.current?.centerCanvas();
+    setZoom(1); // Reset zoom to 100%
+    // Use a small timeout to ensure zoom state updates before centering
+    setTimeout(() => {
+      canvasRef.current?.centerCanvas();
+    }, 50);
   };
 
   // Keyboard shortcuts
@@ -323,7 +327,7 @@ export function DesignEditor() {
         pageElement.style.padding = "0";
 
         // Render all objects on this page
-        page.objects.forEach((obj: { x: any; y: any; width: any; height: any; rotation: any; opacity: any; blur: any; type: string; fontSize: any; fontFamily: string; fontWeight: any; textAlign: string; color: string; text: string; fill: string; strokeWidth: any; stroke: any; shape: string; cornerRadius: any; backgroundImage: any; backgroundPosition: { x: any; y: any; }; backgroundScale: any; imageUrl: string; }) => {
+        page.objects.forEach((obj) => {
           const objElement = document.createElement("div");
           objElement.style.position = "absolute";
           objElement.style.left = `${obj.x}px`;

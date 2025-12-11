@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/login-form";
+
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import Logo from "@/components/logo/Logo";
 

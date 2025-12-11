@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   useRef,
   useState,
@@ -245,7 +247,7 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
     };
 
     // Calculate the total size needed for the scaled canvas plus padding
-    const paddingSize = 2000; // Extra padding around canvas to ensure content is scrollable
+    const paddingSize = 1000; // Extra padding around canvas to ensure content is scrollable
     const scaledWidth = canvasSize.width * zoom;
     const scaledHeight = canvasSize.height * zoom;
     const totalWidth = scaledWidth + paddingSize * 2;
@@ -255,9 +257,13 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
     const centerCanvas = () => {
       const container = containerRef.current;
       if (container) {
+        // Recalculate scaled dimensions to ensure we use current zoom
+        const currentScaledWidth = canvasSize.width * zoom;
+        const currentScaledHeight = canvasSize.height * zoom;
+
         // Calculate the center position of the canvas in the scroll area
-        const canvasCenterX = paddingSize + scaledWidth / 2;
-        const canvasCenterY = paddingSize + scaledHeight / 2;
+        const canvasCenterX = paddingSize + currentScaledWidth / 2;
+        const canvasCenterY = paddingSize + currentScaledHeight / 2;
 
         // Calculate scroll position to center the canvas in viewport
         const scrollLeft = canvasCenterX - container.clientWidth / 2;
@@ -274,6 +280,16 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
     useImperativeHandle(ref, () => ({
       centerCanvas,
     }));
+
+    // Auto-center canvas on mount and when canvas size changes (but not on zoom)
+    useEffect(() => {
+      // Use a small timeout to ensure the container has rendered
+      const timer = setTimeout(() => {
+        centerCanvas();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }, [canvasSize.width, canvasSize.height]);
 
     return (
       <div ref={containerRef} className="flex-1 bg-[#1a1a1a] overflow-auto">

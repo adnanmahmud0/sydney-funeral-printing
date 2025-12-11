@@ -1,6 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import { DesignObject } from "@/types/design";
 import {
-  Palette,
   Type,
   Square,
   Image,
