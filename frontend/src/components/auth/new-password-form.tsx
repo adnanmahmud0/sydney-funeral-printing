@@ -44,7 +44,7 @@ export function NewPasswordForm({ className }: { className?: string }) {
         {/* You can include a hidden token field if needed */}
         {/* <input type="hidden" name="token" value={searchParams.token} /> */}
 
-        <CommonButton text={"Update Password"} href={"/new-password"} />
+        <CommonButton text={"Update Password"} href={"/set-new-password"} />
 
         <p className="text-center text-sm text-primary">
           Back to{" "}

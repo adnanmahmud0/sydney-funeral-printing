@@ -44,7 +44,7 @@ export function LoginForm({ className }: { className?: string }) {
 
         <p className="text-center text-sm text-primary">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium hover:underline">
+          <Link href="/sign-up" className="font-medium hover:underline">
             Sign up
           </Link>
         </p>

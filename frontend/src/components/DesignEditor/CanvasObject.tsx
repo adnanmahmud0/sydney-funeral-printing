@@ -167,6 +167,8 @@ export function CanvasObject({
       y: e.clientY,
       objX: object.x,
       objY: object.y,
+      objWidth: object.width,
+      objHeight: object.height,
     });
   };
 

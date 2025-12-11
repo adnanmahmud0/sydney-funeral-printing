@@ -3,7 +3,6 @@ import { DesignObject } from "@/types/design";
 import {
   Type,
   Square,
-  Image,
   ImageIcon,
   AlignHorizontalJustifyCenter,
   AlignVerticalJustifyCenter,
@@ -547,16 +546,18 @@ export function PropertiesPanel({
                   if (file) {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                      if (event.target?.result) {
-                        const img = new Image();
+                      const result = (event.target as FileReader | null)
+                        ?.result;
+                      if (typeof result === "string") {
+                        const img = new window.Image();
                         img.onload = () => {
                           onUpdate({
-                            imageUrl: event.target.result as string,
+                            imageUrl: result,
                             width: img.naturalWidth,
                             height: img.naturalHeight,
                           });
                         };
-                        img.src = event.target.result as string;
+                        img.src = result;
                       }
                     };
                     reader.readAsDataURL(file);

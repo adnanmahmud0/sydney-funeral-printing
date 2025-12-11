@@ -69,7 +69,7 @@ export function SignupForm({ className }: { className?: string }) {
         </div>
 
         {/* Submit Button */}
-        <CommonButton text={"Create Account"} href={"/signup"} />
+        <CommonButton text={"Create Account"} href={"/sign-up"} />
 
         {/* Login Link */}
         <p className="text-center text-sm text-primary">

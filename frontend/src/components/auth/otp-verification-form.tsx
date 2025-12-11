@@ -94,8 +94,7 @@ export function OtpInputSeparate({ className }: { className?: string }) {
 
         <CommonButton
           text={isComplete ? "Verify & Continue" : "Verify OTP"}
-          href="/verify-otp"
-          disabled={!isComplete}
+          href="/verify-code"
         />
 
         <p className="text-center text-sm text-primary">
