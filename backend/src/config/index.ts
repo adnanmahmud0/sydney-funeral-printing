@@ -6,11 +6,13 @@ export default {
   ip_address: process.env.IP_ADDRESS,
   database_url: process.env.DATABASE_URL,
   node_env: process.env.NODE_ENV,
-  port: process.env.PORT,
-  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
+  port: process.env.PORT || '1000',
+  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS || '10',
   jwt: {
-    jwt_secret: process.env.JWT_SECRET,
-    jwt_expire_in: process.env.JWT_EXPIRE_IN,
+    jwt_secret: process.env.JWT_SECRET || 'dev-secret',
+    jwt_expire_in: process.env.JWT_EXPIRE_IN || '1h',
+    jwt_refresh_secret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret',
+    jwt_refresh_expire_in: process.env.JWT_REFRESH_EXPIRE_IN || '7d',
   },
   email: {
     from: process.env.EMAIL_FROM,

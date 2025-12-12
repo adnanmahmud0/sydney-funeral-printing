@@ -47,4 +47,14 @@ export const AuthValidation = {
   createLoginZodSchema,
   createResetPasswordZodSchema,
   createChangePasswordZodSchema,
+  createResendVerifyEmailZodSchema: z.object({
+    body: z.object({
+      email: z.string({ required_error: 'Email is required' }),
+    }),
+  }),
+  createRefreshTokenZodSchema: z.object({
+    body: z.object({
+      refreshToken: z.string().min(1).optional(),
+    }),
+  }),
 };

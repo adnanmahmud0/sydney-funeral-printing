@@ -5,6 +5,7 @@ import ApiError from '../../errors/ApiError';
 import handleValidationError from '../../errors/handleValidationError';
 import handleZodError from '../../errors/handleZodError';
 import { IErrorMessage } from '../../types/errors.types';
+import { debugError } from '../../shared/debug';
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
 
@@ -27,33 +28,33 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
     message = 'Session Expired';
     errorMessages = error?.message
       ? [
-          {
-            path: '',
-            message:
-              'Your session has expired. Please log in again to continue.',
-          },
-        ]
+        {
+          path: '',
+          message:
+            'Your session has expired. Please log in again to continue.',
+        },
+      ]
       : [];
   } else if (error instanceof ApiError) {
     statusCode = error.statusCode;
     message = error.message;
     errorMessages = error.message
       ? [
-          {
-            path: '',
-            message: error.message,
-          },
-        ]
+        {
+          path: '',
+          message: error.message,
+        },
+      ]
       : [];
   } else if (error instanceof Error) {
     message = error.message;
     errorMessages = error.message
       ? [
-          {
-            path: '',
-            message: error?.message,
-          },
-        ]
+        {
+          path: '',
+          message: error?.message,
+        },
+      ]
       : [];
   }
 
@@ -62,6 +63,11 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
     message,
     errorMessages,
     stack: config.node_env !== 'production' ? error?.stack : undefined,
+  });
+  debugError('error', {
+    statusCode,
+    message,
+    path: req.originalUrl,
   });
 };
 

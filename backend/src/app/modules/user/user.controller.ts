@@ -35,7 +35,7 @@ const getUserProfile = catchAsync(async (req: Request, res: Response) => {
 const updateProfile = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const user = req.user;
-    const image = getSingleFilePath(req.files, 'image');
+    const image = getSingleFilePath(req.files as Partial<Record<string, File[]>> | undefined, 'image');
 
     const data = {
       image,

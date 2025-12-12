@@ -4,12 +4,19 @@ import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { AuthController } from './auth.controller';
 import { AuthValidation } from './auth.validation';
+
 const router = express.Router();
 
 router.post(
   '/login',
   validateRequest(AuthValidation.createLoginZodSchema),
   AuthController.loginUser
+);
+
+router.post(
+  '/refresh',
+  validateRequest(AuthValidation.createRefreshTokenZodSchema),
+  AuthController.refreshToken
 );
 
 router.post(
@@ -22,6 +29,12 @@ router.post(
   '/verify-email',
   validateRequest(AuthValidation.createVerifyEmailZodSchema),
   AuthController.verifyEmail
+);
+
+router.post(
+  '/resend-verify-email',
+  validateRequest(AuthValidation.createResendVerifyEmailZodSchema),
+  AuthController.resendVerifyEmail
 );
 
 router.post(

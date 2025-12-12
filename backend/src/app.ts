@@ -3,14 +3,24 @@ import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './routes';
+import { debug } from './shared/debug';
 const app = express();
-
-// no request logging
 
 //body parser
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  debug('request', req.method, req.originalUrl, {
+    query: req.query,
+    body: req.body,
+    headers: {
+      authorization: req.headers.authorization ? 'present' : 'missing',
+    },
+  });
+  next();
+});
 
 //file retrieve
 app.use(express.static('uploads'));

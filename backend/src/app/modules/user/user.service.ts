@@ -8,6 +8,7 @@ import unlinkFile from '../../../shared/unlinkFile';
 import generateOTP from '../../../util/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
+import { debug } from '../../../shared/debug';
 
 const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   //set role
@@ -19,6 +20,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
 
   //send email
   const otp = generateOTP();
+  debug('user.register.otp_created', { email: createUser.email, otp });
   const values = {
     name: createUser.name,
     otp: otp,
@@ -26,6 +28,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   };
   const createAccountTemplate = emailTemplate.createAccount(values);
   emailHelper.sendEmail(createAccountTemplate);
+  debug('user.register.email_send_attempt', { email: createUser.email });
 
   //save to DB
   const authentication = {
@@ -36,6 +39,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
     { _id: createUser._id },
     { $set: { authentication } }
   );
+  debug('user.register.otp_saved', { email: createUser.email });
 
   return createUser;
 };
@@ -64,7 +68,9 @@ const updateProfileToDB = async (
 
   //unlink file here
   if (payload.image) {
-    unlinkFile(isExistUser.image);
+    if (isExistUser.image) {
+      unlinkFile(isExistUser.image);
+    }
   }
 
   const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
